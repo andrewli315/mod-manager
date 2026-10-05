@@ -1,0 +1,6 @@
+{
+  "name": "mod-manager",
+  "version": "0.1.0",
+  "description": "Per-session mod manager: a toolbar dropdown to switch any locally installed mod on or off for this session.",
+  "types": "./types/index.d.ts"
+}
