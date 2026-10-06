@@ -13,6 +13,7 @@ const mods = atom({ plugin: 'mod-manager', key: 'mods' } as const, [])
 const disabled = atom({ plugin: 'mod-manager', key: 'disabled' } as const, [])
 const pending = atom({ plugin: 'mod-manager', key: 'pending' } as const, [])
 const isDirty = atom({ plugin: 'mod-manager', key: 'isDirty' } as const, false)
+const isHidden = atom({ plugin: 'mod-manager', key: 'isHidden' } as const, false)
 
 type Known = Record<string, ModInfo>
 
@@ -198,6 +199,7 @@ export const register: Register = on => {
 
   on('command.run', { command: 'mods' }, async $ => {
     await syncAtoms($)
+    await update($, isHidden, () => false)
     await $.ui.open({ id: PANE, title: 'Mods' })
 
     return { text: 'Mod manager opened.' }
@@ -205,6 +207,10 @@ export const register: Register = on => {
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     if (e.surface === 'mobile' || e.props.hasSurvey) {
+      return next(e)
+    }
+    // Hidden until the person types /mods.
+    if (await read($, isHidden)) {
       return next(e)
     }
     const list = await read($, mods)
@@ -277,6 +283,7 @@ export const register: Register = on => {
             hotkey="m"
             onPress={() => $.ui.open({ id: PANE, title: 'Mods' })}
           />
+          <Button key="hide" label="✕ Hide" plain dimColor hotkey="h" onPress={() => update($, isHidden, () => true)} />
         </Box>
       </Box>
     )

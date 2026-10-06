@@ -12,6 +12,7 @@ declare module 'claude-code' {
       disabled: string[]
       pending: string[]
       isDirty: boolean
+      isHidden: boolean
     }
   }
 }
